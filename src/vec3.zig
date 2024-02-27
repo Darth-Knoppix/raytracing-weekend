@@ -1,40 +1,18 @@
 const std = @import("std");
 
 pub const Vec3 = struct {
-    x: f32,
-    y: f32,
-    z: f32,
+    value: @Vector(3, f32),
 
-    pub fn init(x: f32, y: f32, z: f32) Vec3 {
-        return Vec3{
-            .x = x,
-            .y = y,
-            .z = z,
-        };
+    pub fn init(rx: f32, ry: f32, rz: f32) Vec3 {
+        return Vec3{ .value = @Vector(3, f32){ rx, ry, rz } };
     }
 
-    pub fn dot(self: Vec3, other: Vec3) f32 {
-        return self.x * other.x + self.y * other.y + self.z * other.z;
+    pub fn zero() Vec3 {
+        return Vec3{ .value = @Vector(3, f32){ 0, 0, 0 } };
     }
 
-    pub fn cross(self: Vec3, other: Vec3) Vec3 {
-        return Vec3.init(self.y * other.z - self.z * other.y, self.z * other.x - self.x * other.z, self.x * other.y - self.y * other.x);
-    }
-
-    pub fn multiply(self: Vec3, other: Vec3) Vec3 {
-        return Vec3.init(self.x * other.x, self.y * other.y, self.z * other.z);
-    }
-
-    pub fn add(self: Vec3, other: Vec3) Vec3 {
-        return Vec3.init(self.x + other.x, self.y + other.y, self.z + other.z);
-    }
-
-    pub fn subtract(self: Vec3, other: Vec3) Vec3 {
-        return Vec3.init(self.x - other.x, self.y - other.y, self.z - other.z);
-    }
-
-    pub fn divide(self: Vec3, other: Vec3) Vec3 {
-        return Vec3.init(self.x * other.x, self.y * other.y, self.z * other.z);
+    pub fn from_vector(vector: [3]f32) Vec3 {
+        return Vec3{ .value = vector };
     }
 
     pub fn length(self: Vec3) f32 {
@@ -42,12 +20,24 @@ pub const Vec3 = struct {
     }
 
     pub fn length_squared(self: Vec3) f32 {
-        return self.x * self.x + self.y * self.y + self.z * self.z;
+        return self.value[0] * self.value[0] + self.value[1] * self.value[1] + self.value[2] * self.value[2];
     }
 
     pub fn unit(self: Vec3) Vec3 {
         const v_length = self.length();
-        return self.divide(Vec3.init(v_length, v_length, v_length));
+        return Vec3.from_vector(self.value / Vec3.init(v_length, v_length, v_length).value);
+    }
+
+    pub fn x(self: Vec3) f32 {
+        return self.value[0];
+    }
+
+    pub fn y(self: Vec3) f32 {
+        return self.value[1];
+    }
+
+    pub fn z(self: Vec3) f32 {
+        return self.value[2];
     }
 };
 

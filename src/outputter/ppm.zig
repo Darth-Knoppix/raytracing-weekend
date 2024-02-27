@@ -15,19 +15,17 @@ pub fn generate(width: u16, height: u16, max_color: u8) !void {
     const focal_length = 1.0;
     const viewport_height = 2.0;
     const viewport_width = viewport_height * (f_width / f_height);
-    const camera_center = Vec3.init(0, 0, 0);
+    const camera_center = Vec3.zero();
 
     const viewport_u = Vec3.init(viewport_width, 0, 0);
     const viewport_v = Vec3.init(0, -viewport_height, 0);
 
-    const pixel_delta_u = viewport_u.divide(Vec3.init(f_width, f_width, f_width));
-    const pixel_delta_v = viewport_v.divide(Vec3.init(f_height, f_height, f_height));
+    const pixel_delta_u = Vec3.from_vector(viewport_u.value / Vec3.init(f_width, f_width, f_width).value);
+    const pixel_delta_v = Vec3.from_vector(viewport_v.value / Vec3.init(f_height, f_height, f_height).value);
 
-    const viewport_top_left = camera_center.subtract(Vec3.init(0, 0, focal_length))
-        .subtract(viewport_u.divide(Vec3.init(2, 2, 2)))
-        .subtract(viewport_v.divide(Vec3.init(2, 2, 2)));
+    const viewport_top_left = Vec3.from_vector(camera_center.value - Vec3.init(0, 0, focal_length).value - (viewport_u.value / Vec3.init(2, 2, 2).value) - (viewport_v.value / Vec3.init(2, 2, 2).value));
 
-    const pixel_top_left = viewport_top_left.add(Vec3.init(0.5, 0.5, 0.5)).multiply(pixel_delta_u.add(pixel_delta_v));
+    const pixel_top_left = Vec3.from_vector(viewport_top_left.value + Vec3.init(0.5, 0.5, 0.5).value * (pixel_delta_u.value + pixel_delta_v.value));
 
     try write_header(writer, width, height, max_color);
 
@@ -37,8 +35,8 @@ pub fn generate(width: u16, height: u16, max_color: u8) !void {
 
         for (0..width) |column_index| {
             const f_column = @as(f32, @floatFromInt(column_index));
-            const pixel_center = pixel_top_left.add(pixel_delta_u.multiply(Vec3.init(f_row, f_row, f_row))).add(pixel_delta_v.multiply(Vec3.init(f_column, f_column, f_column)));
-            const ray_direction = pixel_center.subtract(camera_center);
+            const pixel_center = Vec3.from_vector(pixel_top_left.value + (Vec3.init(f_column, f_column, f_column).value * pixel_delta_u.value) + (Vec3.init(f_row, f_row, f_row).value * pixel_delta_v.value));
+            const ray_direction = Vec3.from_vector(pixel_center.value - camera_center.value);
             const ray = Ray.init(camera_center, ray_direction);
             const color = ray_color(ray);
 
@@ -69,7 +67,7 @@ fn map_float_to_channel(value: f32, size: u8) u8 {
 
 fn ray_color(ray: Ray) Color {
     const unit_direction = ray.direction.unit();
-    const a = 0.5 * (unit_direction.y + 1.0);
-    const v = Color.init(1.0, 1.0, 1.0).value.add(Color.init(0.5, 0.7, 1.0).value.multiply(Vec3.init(a, a, a))).multiply(Vec3.init(1, 1, 1).subtract(Vec3.init(a, a, a)));
-    return Color.init(v.x, v.y, v.z);
+    const a = 0.5 * (unit_direction.y() + 1.0);
+    const v = Color.init(1.0 - a, 1.0 - a, 1.0 - a).value * Color.init(1.0, 1.0, 1.0).value + Color.init(a, a, a).value * Color.init(0.5, 0.7, 1.0).value;
+    return Color.from_vector(v);
 }
