@@ -60,7 +60,6 @@ pub fn write_color(writer: anytype, color: Color, max_color: u8) !void {
 }
 
 fn map_float_to_channel(value: f32, size: u8) u8 {
-    std.log.debug("{} - {}", .{ value, size });
     const max_color_multiplier = @as(f32, @floatFromInt(size));
     return @as(u8, @intFromFloat(value * max_color_multiplier));
 }

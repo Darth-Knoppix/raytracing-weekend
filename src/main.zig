@@ -4,7 +4,7 @@ const Vec3 = @import("./vec3.zig").Vec3;
 
 pub fn main() !void {
     const aspect_ratio = 16.0 / 9.0;
-    const raw_image_width = 512.0;
+    const raw_image_width = 768.0;
     const raw_image_height = raw_image_width / aspect_ratio;
 
     const image_width = @as(u16, @intFromFloat(raw_image_width));
