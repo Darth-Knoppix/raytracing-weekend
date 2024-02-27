@@ -8,6 +8,8 @@ pub fn generate(width: u16, height: u16, max_color: u8) !void {
     try stdout.print("P3\n{} {}\n{}\n", .{ width, height, max_color });
 
     for (0..height) |row_index| {
+        std.log.debug("\rScanlines remaining: {}", .{height - row_index});
+
         for (0..width) |column_index| {
             const width_offset = @as(f64, @floatFromInt(width - 1));
             const height_offset = @as(f64, @floatFromInt(height - 1));
