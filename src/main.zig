@@ -3,7 +3,7 @@ const ppm_outputter = @import("./outputter/ppm.zig");
 
 pub fn main() !void {
     std.debug.print("Outputting PPM file", .{});
-    try ppm_outputter.generate(256, 256, 255);
+    try ppm_outputter.generate(512, 512, 255);
 }
 
 test "simple test" {
