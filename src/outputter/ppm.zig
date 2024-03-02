@@ -70,15 +70,15 @@ fn map_float_to_channel(value: f32, size: u8) u8 {
 
 fn hit_sphere(center: Vec3, radius: f32, ray: Ray) f32 {
     const intersect = Vec3.from_vector(ray.origin.value - center.value);
-    const a = ray.direction.dot(ray.direction);
-    const b = 2.0 * intersect.dot(ray.direction);
-    const c = intersect.dot(intersect) - radius * radius;
-    const discriminant = b * b - 4.0 * a * c;
+    const a = ray.direction.length_squared();
+    const half_b = intersect.dot(ray.direction);
+    const c = intersect.length_squared() - radius * radius;
+    const discriminant = half_b * half_b - a * c;
 
     if (discriminant < 0) {
         return -1.0;
     } else {
-        return (-b - @sqrt(discriminant)) / (2.0 * a);
+        return (-half_b - @sqrt(discriminant)) / a;
     }
 }
 
