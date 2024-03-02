@@ -3,6 +3,8 @@ const Color = @import("../color.zig").Color;
 const Ray = @import("../ray.zig").Ray;
 const Vec3 = @import("../vec3.zig").Vec3;
 
+const pale_blue = Color.init(0.5, 0.7, 1.0);
+
 pub fn generate(width: u16, height: u16, max_color: u8) !void {
     const out = std.io.getStdOut();
     var bw = std.io.bufferedWriter(out.writer());
@@ -67,6 +69,6 @@ fn map_float_to_channel(value: f32, size: u8) u8 {
 fn ray_color(ray: Ray) Color {
     const unit_direction = ray.direction.unit();
     const a = 0.5 * (unit_direction.y() + 1.0);
-    const v = Color.init(1.0 - a, 1.0 - a, 1.0 - a).value * Color.init(1.0, 1.0, 1.0).value + Color.init(a, a, a).value * Color.init(0.5, 0.7, 1.0).value;
+    const v = Color.init(1.0 - a, 1.0 - a, 1.0 - a).value * Color.init(1.0, 1.0, 1.0).value + Color.init(a, a, a).value * pale_blue.value;
     return Color.from_vector(v);
 }
