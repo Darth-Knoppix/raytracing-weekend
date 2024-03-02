@@ -39,28 +39,41 @@ pub const Vec3 = struct {
     pub fn z(self: Vec3) f32 {
         return self.value[2];
     }
+
+    pub fn dot(self: Vec3, other: Vec3) f32 {
+        return self.x() * other.x() + self.y() * other.y() + self.z() * other.z();
+    }
 };
 
 test "multiply" {
     const a = Vec3.init(1, 2, 3);
     const b = Vec3.init(2, 2, 2);
 
-    const result = a.multiply(b);
-    try std.testing.expectEqual(Vec3.init(2, 4, 6), result);
+    const result = a.value * b.value;
+    try std.testing.expectEqual(Vec3.init(2, 4, 6).value, result);
 }
 
 test "add" {
     const a = Vec3.init(1, 2, 3);
     const b = Vec3.init(2, 2, 2);
 
-    const result = a.add(b);
-    try std.testing.expectEqual(Vec3.init(3, 4, 5), result);
+    const result = a.value + b.value;
+    try std.testing.expectEqual(Vec3.init(3, 4, 5).value, result);
 }
 
 test "subtract" {
     const a = Vec3.init(1, 2, 3);
     const b = Vec3.init(2, 2, 2);
 
-    const result = a.subtract(b);
-    try std.testing.expectEqual(Vec3.init(-1, 0, 1), result);
+    const result = a.value - b.value;
+    try std.testing.expectEqual(Vec3.init(-1, 0, 1).value, result);
+}
+
+test "dot" {
+    const a = Vec3.init(1, 2, 3);
+    const b = Vec3.init(2, 2, 2);
+
+    const result = a.dot(b);
+    const expected: f32 = 12;
+    try std.testing.expectEqual(expected, result);
 }
