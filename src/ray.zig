@@ -11,7 +11,7 @@ pub const Ray = struct {
         };
     }
 
-    pub fn at(self: Ray, t: f32) Ray {
-        return self.origin + self.direction * Vec3.init(t, t, t);
+    pub fn at(self: Ray, t: f32) Vec3 {
+        return Vec3.from_vector(self.origin.value + self.direction.value * Vec3.init(t, t, t).value);
     }
 };

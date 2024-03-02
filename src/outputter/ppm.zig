@@ -68,18 +68,25 @@ fn map_float_to_channel(value: f32, size: u8) u8 {
     return @as(u8, @intFromFloat(value * max_color_multiplier));
 }
 
-fn hit_sphere(center: Vec3, radius: f32, ray: Ray) bool {
+fn hit_sphere(center: Vec3, radius: f32, ray: Ray) f32 {
     const intersect = Vec3.from_vector(ray.origin.value - center.value);
     const a = ray.direction.dot(ray.direction);
     const b = 2.0 * intersect.dot(ray.direction);
     const c = intersect.dot(intersect) - radius * radius;
     const discriminant = b * b - 4.0 * a * c;
-    return discriminant >= 0;
+
+    if (discriminant < 0) {
+        return -1.0;
+    } else {
+        return (-b - @sqrt(discriminant)) / (2.0 * a);
+    }
 }
 
 fn ray_color(ray: Ray) Color {
-    if (hit_sphere(Vec3.init(0, 0, -1), 0.5, ray)) {
-        return redish;
+    const hit_point = hit_sphere(Vec3.init(0, 0, -1), 0.5, ray);
+    if (hit_point > 0.0) {
+        const length = Vec3.from_vector(ray.at(hit_point).value - Vec3.init(0, 0, -1).value);
+        return Color.from_vector(Color.init(length.x() + 1.0, length.y() + 1.0, length.z() + 1.0).value * Vec3.init(0.5, 0.5, 0.5).value);
     }
 
     const unit_direction = ray.direction.unit();
