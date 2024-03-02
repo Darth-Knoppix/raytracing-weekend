@@ -3,7 +3,9 @@ const Color = @import("../color.zig").Color;
 const Ray = @import("../ray.zig").Ray;
 const Vec3 = @import("../vec3.zig").Vec3;
 
+// Colours
 const pale_blue = Color.init(0.5, 0.7, 1.0);
+const redish = Color.init(1.0, 0.7, 0.5);
 
 pub fn generate(width: u16, height: u16, max_color: u8) !void {
     const out = std.io.getStdOut();
@@ -66,7 +68,20 @@ fn map_float_to_channel(value: f32, size: u8) u8 {
     return @as(u8, @intFromFloat(value * max_color_multiplier));
 }
 
+fn hit_sphere(center: Vec3, radius: f32, ray: Ray) bool {
+    const intersect = Vec3.from_vector(ray.origin.value - center.value);
+    const a = ray.direction.dot(ray.direction);
+    const b = 2.0 * intersect.dot(ray.direction);
+    const c = intersect.dot(intersect) - radius * radius;
+    const discriminant = b * b - 4.0 * a * c;
+    return discriminant >= 0;
+}
+
 fn ray_color(ray: Ray) Color {
+    if (hit_sphere(Vec3.init(0, 0, -1), 0.5, ray)) {
+        return redish;
+    }
+
     const unit_direction = ray.direction.unit();
     const a = 0.5 * (unit_direction.y() + 1.0);
     const v = Color.init(1.0 - a, 1.0 - a, 1.0 - a).value * Color.init(1.0, 1.0, 1.0).value + Color.init(a, a, a).value * pale_blue.value;
